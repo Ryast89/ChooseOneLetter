@@ -1,0 +1,209 @@
+/****************************************************************************
+* Name:        ChangeOne
+* Author:      Ryan Stroebel
+* Date:        March 8th, 2018
+* Purpose:     Plays a game by changing a letter at a time.
+*****************************************************************************/
+
+import javax.swing.*;
+import java.io.*;
+
+public class ChangeOne {
+	static String [] dictionary = getFileContents("dictionary.txt");
+	public static void main(String[] args) {
+		String word1 = ""; //the current word
+		String word2 = ""; //the goal word
+		int timesRun = 0; //the amount of times you've made a change
+	
+		//get and check the starting word
+		
+		System.out.println("Welcome to change one letter!\nTo play the game, one player enters a start word and one player enters a goal word.\nYou then take turns changing one letter to make a new word.\nThe player who reaches the goal word on their turn wins.\nHave fun!");
+		for(boolean i = false; i == false;) {
+			word1 = getWordFromUser("Player 1, Enter a four-letter word.");
+			i = checkDictionary(word1, dictionary);
+		} //for
+	 
+		//get and check the goal word
+		for(boolean i = false; i == false;) {
+			word2 = getWordFromUser("Player 2, Enter a four-letter word to get to.");
+			i = checkDictionary(word2, dictionary);
+		} //for
+		System.out.println("the start word is " + word1);
+		System.out.println("the goal word is " + word2);
+		
+		//If both words start as the same, nobody wins
+		if (word1.equals(word2)) {
+			System.out.println("Your words are the same. Nobody wins, everybody loses.");
+			System.exit(0);
+		} //if
+		
+		//get the change, then change the word
+		for (int i = 0; i != -1; i++) {
+			word1 = getStepAndChange(timesRun, word1, dictionary);
+			System.out.println("The new word is " + word1);
+			
+		//end the game if someone would win
+		if (word1.equals(word2)) {
+			i = -2;
+			System.out.println("Player " + (timesRun%2+1) + " wins in " + ( timesRun + 1) + " steps.");
+			} //if
+			timesRun++;
+		} //for
+			
+	} //main
+	
+	//make an array with the dictionary's words
+	public static String [] getFileContents(String fileName){
+
+        String [] contents = null;
+        int length = 0;
+        try {
+
+            // input
+            String folderName = "/subFolder/"; // if the file is contained in the same folder as the .class file, make this equal to the empty string
+            String resource = fileName;
+
+			// this is the path within the jar file
+			InputStream input = FileInputOutput.class.getResourceAsStream(folderName + resource);
+			if (input == null) {
+				// this is how we load file within editor (eg eclipse)
+				input = FileInputOutput.class.getClassLoader().getResourceAsStream(resource);
+			}
+			BufferedReader in = new BufferedReader(new InputStreamReader(input));	
+            
+            in.mark(Short.MAX_VALUE);  // see api
+
+            // count number of lines in file
+            while (in.readLine() != null) {
+				length++;
+            }
+
+            in.reset(); // rewind the reader to the start of file
+            contents = new String[length]; // give size to contents array
+
+            // read in contents of file and print to screen
+            for (int i = 0; i < length; i++) {
+				contents[i] = in.readLine();
+            }
+            in.close();
+        } catch (Exception e) {
+            System.out.println("File Input Error");
+        }
+
+        return contents;
+
+     } // getFileContents
+	 
+	//get a word from the player. Check it for errors.
+	public static String getWordFromUser(String message) {
+		String word = ""; //the word entered by the player
+		String error = ""; //a possible error message
+		
+		//get a valid word
+		for (boolean i = false; i == false;) {
+			word = JOptionPane.showInputDialog(error + message);
+			
+			//if cancel is pressed, stop the game
+			if (word == null) {
+				System.exit(0);
+			} //if
+			
+			word = word.toLowerCase();
+			
+			//make sure the word is 4 letters long
+			if (word.length() == 4) {
+				i = checkDictionary(word, dictionary);
+			} else {
+				error = "Your word is not four letters long. \n";
+				continue;
+			} //if + else
+			
+			//make sure the word is in the dictionary
+			if (i == false) {
+				error = "Your word is not in the dictionary. \n";
+			} //if
+		} //for
+	 
+	return word;
+	
+	}//getWordFromUser
+
+	//look in the dictionary for a word
+	public static boolean checkDictionary(String word, String[] dictionary) {
+		
+		//search the dictionary for a valid word
+		for(int i = 0; i < 26; i++) {
+			if (dictionary[i].contains(word) && word.length() == 4 && word.contains(" ") == false ){
+				return true;
+			} 
+		}
+	 
+		return false;
+	 
+	 
+	}//checkDictionary
+	
+	//get the wanted change and change it
+	public static String getStepAndChange (int timesRun, String word, String[] dictionary) {
+		String error = ""; //the error message (starts blank)
+		String word1 = ""; //the word
+		char [] changeArray = null; //the array that holds the wanted change
+		
+		//get a valid word
+		for(; ! error.equals("none");) {
+			String change = ""; // the entered change
+			change = JOptionPane.showInputDialog(error + "Player " + (timesRun%2+1) + ", enter a change in the format: index new letter. EG: 0 M \nThe current word is " + word);
+			
+			//if the user cancels, end the game
+			if (change == null) {
+				System.exit(0);
+			} //if
+			
+			error = ""; // reset the error
+			
+			//put the change into an array
+			change = change.toLowerCase();
+			changeArray = change.toCharArray();
+			
+			//check for the array length
+			if(changeArray.length != 3) {
+				error = "Your array is either too short or too long. Did you forget a space? \n";
+				continue;
+			} //if
+			
+			//look for any errors
+			if(changeArray[0] < 48 || changeArray[0] > 51) {
+				error += "Your index to change must be between 0 and 3. \n";
+			} //if
+			if (changeArray[1] != 32) {
+				error += "You must include a space between your index and new letter. \n";
+			} //if
+			if (changeArray[2] < 97 || changeArray[2] > 122) {
+				error += "Your letter to change was not a letter. \n";
+			} //if
+			
+			//if there is already an error, ask for another input since the dictionary check will likely not work
+			if (! error.equals("")) {
+				continue;
+			} //if
+			
+			//make a new, changed word
+			char [] wordArray;
+			wordArray = word.toCharArray();
+			wordArray[(int)changeArray[0] - 48] = changeArray[2];
+			word1 = new String (wordArray);
+			
+			//look for the new word in the dictionary
+			if(checkDictionary(word1, dictionary) == false) {
+				error += "Your new word is not in the dictionary \n";
+			} //if
+			
+			//if there are no errors, the word is valid and this breaks the loop
+			if(error.equals("")) {
+				error = "none";
+			} //if
+		} //for
+		return word1; 
+	 } //getStepAndChange
+	 
+} //class
