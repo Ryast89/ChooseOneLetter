@@ -1,3 +1,11 @@
+/***************************************************************************************
+* Name:        GameTemplate for Change One leter
+* Author:      Lara Wear
+* Date:        Oct 27, 2011
+* Purpose:     Shows how to create an interactive, graphical application in Java using
+               Dialog Boxes from JOptionPane for user input.
+****************************************************************************************/
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +21,7 @@ public class GameTemplate extends JPanel {
     static JFrame frame;                 // window frame which contains the panel
     static final int WINDOW_WIDTH = 800; // width of display window
     static final int WINDOW_HEIGHT = 600;// height of display window
-
+	static String s = "";
     static int gameStage = 0;            // stages of game
     static final int WELCOME_SCREEN = 0;
     static final int MENU = 1;
@@ -67,7 +75,7 @@ public class GameTemplate extends JPanel {
         panel = new GameTemplate(); /*****MUST CALL THIS CLASS (ie same as filename) ****/
   
         panel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));  // set size of application window
-        frame = new JFrame ("Game Template");  // set title of window
+        frame = new JFrame ("Change One Letter Game");  // set title of window
         frame.add (panel);
   
         // add a key input listener (defined below) to our canvas so we can respond to key pressed
@@ -111,17 +119,20 @@ public class GameTemplate extends JPanel {
 
             g.setColor(Color.black);
             g.setFont(new Font("SansSerif", Font.BOLD, 16));   // set font
-            g.drawString("Welcome to ", 360, 250);
-            g.drawString("Press any key to continue.",310,350);
+            g.drawString("Welcome to", 360, 260);
+            g.drawString("Press any key to continue.",310,330);
 
-            g.setColor(Color.blue);
+            g.setColor(Color.white);
             g.setFont(new Font("SansSerif", Font.BOLD, 36));   // set font
-            g.drawString("Game Template",280,300);  // display
+			s = "Change One Letter";
+            g.drawString(s, (WINDOW_WIDTH - g.getFontMetrics().stringWidth(s))/2,300);  // display
 
 
         // display menu
         } else if (gameStage == MENU) {
-            g.setColor(Color.blue);
+			g.setColor(new Color(24,160,202)); 
+			g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+            g.setColor(Color.white);
             g.setFont(new Font("SansSerif", Font.BOLD, 36));   // set font
             drawString(g, "Change One Letter",230,180);  // display
             g.setFont(new Font("SansSerif", Font.BOLD, 16));   // set font
@@ -130,14 +141,18 @@ public class GameTemplate extends JPanel {
            
         // display instructions
         } else if (gameStage == INSTRUCTIONS) {
-			g.drawImage(bgImage1, 0, 0, this);
+			g.setColor(new Color(24,160,202)); 
+			g.fillRect (0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+			//g.drawImage(bgImage1, 0, 0, this);
             g.setColor(Color.white);
+			g.drawRect (25, 25, (WINDOW_WIDTH-50), (WINDOW_HEIGHT-50));
             g.setFont(new Font("Dialog", Font.BOLD, 36));   // set font
-            drawString(g, "Instructions", 280,100);    // display title
+			s = "Instructions";
+            g.drawString(s, (WINDOW_WIDTH - g.getFontMetrics().stringWidth(s))/2,100);    // display title
             g.setFont(new Font("Dialog", Font.PLAIN, 18));   // set font
             
-            instructionsText = "Both players choose an english word: one to start with, the other to get to. \nEach player then takes turns changing one letter of that word to make another word.\nWhen the word is reached, the player that last changed it wins.\nHave fun!";
-            drawString(g, instructionsText, 75, 200);  // display instructions
+            instructionsText = "1. Both players choose an english word: one to start with, the other to get to. \n\n2. Each player then takes turns changing one letter of that word to make another word.\n\n3. When the word is reached, the player that last changed it wins.\n\n4. Have fun!";
+            drawString(g, instructionsText, 65, 150);  // display instructions
 
 			
 		//display interface to get usernames
@@ -344,9 +359,12 @@ public class GameTemplate extends JPanel {
              playOutput3 = "Press enter to see " + getCurrentPlayer() + "'s turn.";
          } 
          // else it is player 1 or 2's turn
-         else {
-             playOutput3 = getCurrentPlayer() + " enter your input.";
+         else if(turn == 2) {
+             playOutput3 = getCurrentPlayer() + " enter the goal word.";
          }
+		 else {
+			playOutput3 = getCurrentPlayer() + " enter the new word.";
+			}
          panel.repaint();
          
     
@@ -459,8 +477,15 @@ public class GameTemplate extends JPanel {
         
         // text to display
         playOutput = "Begin Play! ";
-        playOutput3 = getCurrentPlayer() + " type something.";
+		if(turn == 1) {
+        playOutput3 = getCurrentPlayer() + " type the starting word.";
+		} else if(turn == 2) {
+		playOutput3 = getCurrentPlayer() + " type the goal word.";
+		} else {
+		playOutput3 = getCurrentPlayer() + " type the new word.";
+		}
         panel.repaint();
+		
 
     } // playGame
     
