@@ -1,3 +1,12 @@
+/***************************************************************************************
+* Name:        GameTemplate for Change One leter
+* Author:      Lara Wear
+* Date:        Oct 27, 2011
+* Purpose:     Shows how to create an interactive, graphical application in Java using
+               Dialog Boxes from JOptionPane for user input.
+****************************************************************************************/
+
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -13,7 +22,7 @@ public class GameTemplate extends JPanel {
     static JFrame frame;                 // window frame which contains the panel
     static final int WINDOW_WIDTH = 800; // width of display window
     static final int WINDOW_HEIGHT = 600;// height of display window
-
+	static String s = "";
     static int gameStage = 0;            // stages of game
     static final int WELCOME_SCREEN = 0;
     static final int MENU = 1;
@@ -25,14 +34,12 @@ public class GameTemplate extends JPanel {
 	static String p2Name = "";
     static int numPlayers = 0;                     // number of players
     static double runningTotal = 0;                // runningTotal of game
-    static int turn = -1;                           // current turn of game (starts at turn -1)
+    static int turn = 1;                           // current turn of game (starts at turn 1)
     static String dataEntered = "";                 // input from user
     static boolean resetDataEntered = false;       // used to reset dataEntered to empty string
     static String currentPlayer = "";              // tracks the currentplayer
     static String currentWord = "";                 // tracks the currentWord
 	static String goalWord = "";					//tracks the goal word
- 
-
     static String playOutput = "";                 // output to panel
     static String playOutput1 = "";                 // output to panel 
     static String playOutput2 = "";                 // output to panel 
@@ -40,7 +47,6 @@ public class GameTemplate extends JPanel {
     static String playOutput4 = "";                 // output to panel 
     static String playOutputList = "";              // output all steps
     static String instructionsText = "";            // instructions
-
 	public static String[] dictionary = getFileContents("dictionary.txt"); // declares dictionary for the whole class, can be used in any method
 
     // start main program
@@ -69,7 +75,7 @@ public class GameTemplate extends JPanel {
         panel = new GameTemplate(); /*****MUST CALL THIS CLASS (ie same as filename) ****/
   
         panel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));  // set size of application window
-        frame = new JFrame ("Game Template");  // set title of window
+        frame = new JFrame ("Change One Letter Game");  // set title of window
         frame.add (panel);
   
         // add a key input listener (defined below) to our canvas so we can respond to key pressed
@@ -85,6 +91,7 @@ public class GameTemplate extends JPanel {
         frame.setVisible(true);
   
     } // main
+	
 	
 	// getting the contents of a file in the same folder
 	public static String[] getFileContents(String fileName) {
@@ -126,8 +133,7 @@ public class GameTemplate extends JPanel {
 
 	// method for checking if a word is in dictionary
 	public static boolean checkDictionary(String word) {
-	
-		// checks if the word in the parameter is in the dictionary
+			// checks if the word in the parameter is in the dictionary
 		for (int i = 0; i < dictionary.length; i++) {
 			if (dictionary[i].contains(word)) {
 				return true;
@@ -136,6 +142,7 @@ public class GameTemplate extends JPanel {
 		return false;
 	} // checkDictionary
 
+	
    /*
    * paintComponent gets called whenever panel.repaint() is
    * called or when frame.pack()/frame.show() is called. It paints
@@ -163,17 +170,20 @@ public class GameTemplate extends JPanel {
 
             g.setColor(Color.black);
             g.setFont(new Font("SansSerif", Font.BOLD, 16));   // set font
-            g.drawString("Welcome to ", 360, 250);
-            g.drawString("Press any key to continue.",310,350);
+            g.drawString("Welcome to", 360, 260);
+            g.drawString("Press any key to continue.",310,330);
 
-            g.setColor(Color.blue);
+            g.setColor(Color.white);
             g.setFont(new Font("SansSerif", Font.BOLD, 36));   // set font
-            g.drawString("Game Template",280,300);  // display
+			s = "Change One Letter";
+            g.drawString(s, (WINDOW_WIDTH - g.getFontMetrics().stringWidth(s))/2,300);  // display
 
 
         // display menu
         } else if (gameStage == MENU) {
-            g.setColor(Color.blue);
+			g.setColor(new Color(24,160,202)); 
+			g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+            g.setColor(Color.white);
             g.setFont(new Font("SansSerif", Font.BOLD, 36));   // set font
             drawString(g, "Change One Letter",230,180);  // display
             g.setFont(new Font("SansSerif", Font.BOLD, 16));   // set font
@@ -182,14 +192,18 @@ public class GameTemplate extends JPanel {
            
         // display instructions
         } else if (gameStage == INSTRUCTIONS) {
-			g.drawImage(bgImage1, 0, 0, this);
+			g.setColor(new Color(24,160,202)); 
+			g.fillRect (0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+			//g.drawImage(bgImage1, 0, 0, this);
             g.setColor(Color.white);
+			g.drawRect (25, 25, (WINDOW_WIDTH-50), (WINDOW_HEIGHT-50));
             g.setFont(new Font("Dialog", Font.BOLD, 36));   // set font
-            drawString(g, "Instructions", 280,100);    // display title
+			s = "Instructions";
+            g.drawString(s, (WINDOW_WIDTH - g.getFontMetrics().stringWidth(s))/2,100);    // display title
             g.setFont(new Font("Dialog", Font.PLAIN, 18));   // set font
             
-            instructionsText = "Both players choose an english word: one to start with, the other to get to. \nEach player then takes turns changing one letter of that word to make another word.\nWhen the word is reached, the player that last changed it wins.\nHave fun!";
-            drawString(g, instructionsText, 75, 200);  // display instructions
+            instructionsText = "1. Both players choose an english word: one to start with, the other to get to. \n\n2. Each player then takes turns changing one letter of that word to make another word.\n\n3. When the word is reached, the player that last changed it wins.\n\n4. Have fun!";
+            drawString(g, instructionsText, 65, 150);  // display instructions
 
 			
 		//display interface to get usernames
@@ -396,9 +410,12 @@ public class GameTemplate extends JPanel {
              playOutput3 = "Press enter to see " + getCurrentPlayer() + "'s turn.";
          } 
          // else it is player 1 or 2's turn
-         else {
-             playOutput3 = getCurrentPlayer() + " enter the new word.";
+         else if(turn == 2) {
+             playOutput3 = getCurrentPlayer() + " enter the goal word.";
          }
+		 else {
+			playOutput3 = getCurrentPlayer() + " enter the new word.";
+			}
          panel.repaint();
          
     
@@ -436,9 +453,8 @@ public class GameTemplate extends JPanel {
 	
 	}//showGetUserNames
 	
-	
-	 public static void displayStartWord(){
-    
+	public static void displayStartWord(){
+   
         // set up strings for display
          playOutput = "Processing...";
          playOutput1 = "Goal word receiver";
@@ -455,18 +471,38 @@ public class GameTemplate extends JPanel {
     
     } // getStartWord
 	
+	public static void displayWrongWord(){
+   
+        // set up strings for display
+         playOutput = "Processing...";
+         playOutput1 = "Invalid word entered!";
+         playOutput4 = getCurrentPlayer() + ": ";
+         playOutput2 = "This word is not valid.";
+        
+      
+         // else it is player 1 or 2's turn
+         
+             playOutput3 = getCurrentPlayer() + " enter a valid four letter word.";
+         
+         panel.repaint();
+         
+    
+    } // getStartWord
+	
+	
+	
     // Saves input entered by user into currentWord
     private static void saveInput() {
-    
-		if (checkDictionary(dataEntered) == true && ! dataEntered.contains(" ")) {
+		
+		if (checkDictionary(dataEntered) == true && ! dataEntered.contains(" ") && dataEntered.length() == 4) {
 			System.out.println("true");
 		} else {
 			System.out.println("false");
 			resetDataEntered = true;
-			displayTurn();
+			displayWrongWord();
 			return;
 		}	
-		
+    
          // save dataEntered into a more permanent location and reset it
 		 if(turn == 0) {
 			 goalWord = dataEntered;
@@ -476,7 +512,7 @@ public class GameTemplate extends JPanel {
 			 turn++;
 			 displayTurn();
 		 } else if (turn == -1) {
-		 
+ 		 
 		  currentWord = dataEntered;
 		 	 System.out.println(currentWord);
          playOutputList += "\n" + currentWord;
@@ -484,8 +520,7 @@ public class GameTemplate extends JPanel {
         
          turn++;  // record turn completed
 		 displayStartWord();
-		 }
-		else {
+		 } else {
          currentWord = dataEntered;
 		 	 System.out.println(currentWord);
          playOutputList += "\n" + currentWord;
@@ -501,7 +536,7 @@ public class GameTemplate extends JPanel {
 
          playOutput = "This game is over.";
 		 playOutput1 = "Somebody won";
-		 playOutput2 = "In " + (turn - 3) + " turns.";
+		 playOutput2 = "In " + (turn - 1) + " turns.";
 		 playOutput3 = "You should say who\n and in how many steps.";
 		 playOutput4 = "Press any key to return to menu";
          gameStage = END_GAME;
@@ -539,19 +574,23 @@ public class GameTemplate extends JPanel {
         playOutputList = "";
         playOutput2 = "";
         playOutput4 = "";
-        currentWord = "";
+        currentWord = "That isn't a word.";
         turn = -1;
         dataEntered = "";
 		goalWord = "";
         
-   
+        
         // text to display
         playOutput = "Begin Play! ";
-        playOutput3 = getCurrentPlayer() + ", Enter the starting word." + '\n';
-					
-	
-		
+		if(turn == 1) {
+        playOutput3 = getCurrentPlayer() + " type the starting word.";
+		} else if(turn == 2) {
+		playOutput3 = getCurrentPlayer() + " type the goal word.";
+		} else {
+		playOutput3 = getCurrentPlayer() + " type the new word.";
+		}
         panel.repaint();
+		
 
     } // playGame
     
