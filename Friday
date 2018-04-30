@@ -25,11 +25,13 @@ public class GameTemplate extends JPanel {
     static final int MENU = 1;
     static final int INSTRUCTIONS = 2;
 	static final int ENTER_NAMES = 3;
-    static final int PLAY = 4;
-    static final int END_GAME = 5;
+	static final int CHOOSE_DIFFICULTY = 4;
+    static final int PLAY = 5;
+    static final int END_GAME = 6;
 	static String p1Name = "";
 	static String p2Name = "";
     static int numPlayers = 0;                     // number of players
+	static int numRand = 0;
     static double runningTotal = 0;                // runningTotal of game
     static int turn = 1;                           // current turn of game (starts at turn 1)
     static String dataEntered = "";                 // input from user
@@ -183,6 +185,19 @@ public class GameTemplate extends JPanel {
             g.setFont(new Font("Garamond", Font.BOLD, 16));   // set font
             instructionsText = "Please make one of the following choices:\n\n1) Display Instructions.\n\n2) One Player Game\n\n3) Two Player Game\n\n4) Exit";
             drawString(g, instructionsText,230,280);  // display
+			
+		} else if (gameStage == CHOOSE_DIFFICULTY) {
+			
+			
+			g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+			g.drawImage(bgImage1, 0, 0, this);
+            g.setFont(new Font("Garamond", Font.BOLD, 16));
+            g.setColor(Color.white);
+            g.setFont(new Font("Garamond", Font.BOLD, 36));   // set font
+            drawString(g, "Change One Letter Game",180,180);  // display
+            g.setFont(new Font("Garamond", Font.BOLD, 16));   // set font
+            instructionsText = "Please make one of the following choices:\n\n1) Easy difficulty\n\n2) Medium difficulty\n\n3) Hard difficulty\n(Warning! This mode can be impossible!)\n\n4 Exit";
+            drawString(g, instructionsText,230,280);  // display
            
         // display instructions
         } else if (gameStage == INSTRUCTIONS) {
@@ -300,14 +315,22 @@ public class GameTemplate extends JPanel {
             // respond to menu selection
                 switch (e.getKeyChar()) {
                     case 49:  showInstructions(); break;             // Key "1" pressed
-                    case 50:  numPlayers = 1; showGetUserNames();  break;    // Key "2" pressed
+                    case 50:  numPlayers = 1; showChooseDifficulty(); break;    // Key "2" pressed
                     case 51:  numPlayers = 2; showGetUserNames(); break;     // Key "3" pressed
                     case 52:  System.exit(0);                        // Key "4" pressed
                 } // switch
-            } 
+            } else if (gameStage == CHOOSE_DIFFICULTY) {
+
+            // respond to menu selection
+                switch (e.getKeyChar()) {
+                    case 49:  numRand = 5; showGetUserNames(); break;             // Key "1" pressed
+                    case 50:  numRand = 15; showGetUserNames();  break;    // Key "2" pressed
+                    case 51:  numRand = -1; showGetUserNames();  break;     // Key "3" pressed
+                    case 52:  System.exit(0);                        // Key "4" pressed
+                } // switch
 			
 			//respond to keys typed when user(s) enter names
-			else if(gameStage == ENTER_NAMES) {
+			} else if(gameStage == ENTER_NAMES) {
 				if (resetDataEntered) {
                     resetDataEntered = false;
                     dataEntered = "";
@@ -413,8 +436,8 @@ public class GameTemplate extends JPanel {
        // you might process the computer's random input here
        
 	   
-	  if(turn == 0) {
-	   
+	if(turn == 0) {
+		if(numRand == -1) {
 			for(int i = 0; i < 4; i++) {
 				for(int j = 0; j != -1;) {
 					letter = (97 + (int)(Math.random() * 26));
@@ -429,14 +452,42 @@ public class GameTemplate extends JPanel {
 				}
 				
 			}
-				
-			
-			
-		goalWord = currentWord2; 
-		computerInput = currentWord2; 
+	    } else if(numRand == 5 || numRand == 15) {
+			int timesRun = 0;
+			currentWord2 = currentWord;
+			String currentWord3 = "";
+			System.out.println(currentWord + "CurrentWord");
+			System.out.println(numRand + "numrand");
+			for(int i = 0; i < numRand; i++) {
+				System.out.println(currentWord2 + "CurrentWord2");
+				do {
+					System.out.println(timesRun);
+					if(timesRun == 3000) {
+						JOptionPane.showMessageDialog(null, "The program could not find another word, so there likely wasn't one.");
+						System.exit(0);
+					}
+					currentWord2 = currentWord2.toLowerCase();
+					index = 0 + (int)(Math.random() * 4);
+					letter = 97 + (int)(Math.random() * 26);
+					word = currentWord2.toCharArray();
 		
+					word[index] = (char)letter;
 			
-	  } else {
+					currentWord3 = new String (word);
+					timesRun++;
+				} while(checkDictionary(currentWord3) == false || currentWord3.equals(currentWord2.toLowerCase()));
+				currentWord2 = new String (word);
+				goalWord = currentWord2;
+				timesRun = 0;
+			
+			}
+		} else {
+			System.out.println("numRand is" + numRand);
+		}
+		
+		goalWord = currentWord2;
+		computerInput = currentWord2;
+	} else {
 		goal = (goalWord.toLowerCase()).toCharArray();
 		
 		
@@ -475,7 +526,7 @@ public class GameTemplate extends JPanel {
 	
 	   //add computer's word to the list
        if(turn == 0) {
-	   goalWord= computerInput;
+	   goalWord = computerInput;
 	   }else{
 			currentWord = computerInput;
 			if(turn % 20 == 0 && turn != 0) {
@@ -550,6 +601,13 @@ public class GameTemplate extends JPanel {
 	
 	}//showGetUserNames
 	
+	private static void showChooseDifficulty () {
+		
+		gameStage = CHOOSE_DIFFICULTY;
+		panel.repaint();
+	
+	}//showGetUserNames
+	
     // sets game up to instruct players to start game
     private static void startGame() {
         gameStage = PLAY;
@@ -562,6 +620,7 @@ public class GameTemplate extends JPanel {
         turn = -1;
         dataEntered = "";
 		goalWord = "";
+		
         
         
         // text to display
