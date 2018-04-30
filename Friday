@@ -196,7 +196,7 @@ public class GameTemplate extends JPanel {
             g.setFont(new Font("Garamond", Font.BOLD, 36));   // set font
             drawString(g, "Change One Letter Game",180,180);  // display
             g.setFont(new Font("Garamond", Font.BOLD, 16));   // set font
-            instructionsText = "Please make one of the following choices:\n\n1) Easy difficulty\n\n2) Medium difficulty\n\n3) Hard difficulty\n(Warning! This mode can be impossible!)\n\n4 Exit";
+            instructionsText = "Please choose your difficulty level:\n\n1) Easy\n\n2) Medium\n\n3) Hard\n(Warning! This mode can be impossible!)\n\n4) Exit";
             drawString(g, instructionsText,230,280);  // display
            
         // display instructions
